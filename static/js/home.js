@@ -5,7 +5,7 @@ loc.text("Triangulating... ")
 var date = $("#date")
 date.text("Guessing..")
 $(".cnt_down_timer").text("0:00")
-$("#mode").text("W")
+$("#mode").text("S")
 
 function getLocation() {
     if (navigator.geolocation) {
@@ -123,6 +123,20 @@ function show_all_activities() {
 function hide_all_activities(activity) {
     activity_options = document.getElementById("mode");
     activity_options.innerHTML = activity
+    var cnt_down_timer = $(".cnt_down_timer")
+
+    var params = {
+        'mode':activity
+    }
+    $.ajax({
+        type: 'POST',
+        url: '/api/select_mode',
+        data: params,
+        dataType: 'json',
+        async: true
+    }).success(function(data){
+        cnt_down_timer.text(data+':00')
+    });
 }
 
 

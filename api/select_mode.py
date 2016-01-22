@@ -1,9 +1,31 @@
+import time 
+
+from bson import ObjectId
 from api.base import BaseApi
 from model.Activity import Activity
+from model.ActivityHistory import PersonalActivityHistory
 
-class possibleMode(BaseApi):
+class selectMode(BaseApi):
     def post(self):
-        remaining_time = self.get_argument('cnt_down_timer')
-        cur_mode = self.get_argument('cur_mode')
-        activities = Activity._get_collection().find({})
-        return self.success(map(lambda a:str(a['name'][0]).upper(), activities))
+        mode = self.get_argument('mode')
+
+        default_user = ObjectId("5678d62244b3b38af6575e1c")
+        new_activity = PersonalActivityHistory()
+
+        activity = Activity._get_collection().find({'short_form':mode})
+        if not activity.count():
+            self.failure("Couldn't find this type of activity.")
+        else:
+            activity = activity[0]
+
+        cur_time = int(time.time())
+        duration = int(activity['duration'])
+        new_activity.uid = default_user
+        new_activity.start_time = cur_time
+        new_activity.expire_time = cur_time + duration
+        new_activity.activity_type = mode
+
+        new_activity.save()
+
+        self.success(duration)
+
