@@ -1,0 +1,175 @@
+#content {
+    width: 100%;
+}
+
+#body {
+    width: 100%;
+    background-color: #343434;
+    color: #E6E6E6;
+    text-align: center;
+    font-family: "Aileron";
+    line-height:1;
+}
+
+
+.tab-content {
+    border-left: 1px solid #ddd;
+    border-right: 1px solid #ddd;
+    border-bottom: 1px solid #ddd;
+    padding: 10px;
+}
+
+.page-header {
+    padding-bottom: 9px;
+    margin: 0px 0 20px;
+    border-bottom: 0px solid #eee;
+    background-color: #343434;
+    color: #E6E6E6;
+}
+
+.logo {
+    padding-top: 20px;
+    padding-bottom: 20px;
+}
+
+.head-nav {
+    text-align: right;
+    font-family: "Aileron";
+    font-size: 22px;
+    margin-top: 24px;
+}
+
+.head-nav-button {
+    display: inline-block;
+    vertical-align: middle;
+    margin: 0px;
+}
+
+.btn-link {
+    font-family: "Aileron";
+    font-size: 22px;
+    padding-right:50px;
+    padding-left:50px;
+    padding-top:25px;
+    color: #E6E6E6;
+}
+
+.btn-link:focus {
+    text-decoration: none;
+}
+.btn-link:hover {
+    text-decoration: none;
+    color: #FFFFFF;
+}
+.btn-link:active {
+    text-decoration: none;
+}
+
+.btn:focus,.btn:active {
+    outline: none !important;
+    color:#E6E6E6;
+}
+.btn:hover{
+    color:#FFFFFF;
+}
+
+.main {
+    padding-top:32px;
+}
+
+#hour {
+    font-size:110px;
+    font-style:normal;
+    padding-right:5px;
+}
+
+#minute {
+    font-size:110px;
+    font-style:normal;
+    padding-left:5px;
+}
+
+#clock {
+    font-size:110px;
+}
+
+#location-temperature {
+    font-size:45px;
+}
+
+#location {
+    font-style:normal;
+}
+
+#temperature {
+    font-style:normal;
+}
+
+#date_info {
+    float:center;
+    font-size:35px;
+}
+
+#date{
+    font-style:normal;
+}
+
+.cnt_down_timer {
+    color:#E6E6E6;
+    font-size:60px;
+    position:relative;
+    bottom:50px;
+    right:30px;
+    font-style: normal;
+}
+
+#mode {
+    color:#E6E6E6;
+    font-size:140px;
+    padding-top:0px;
+    padding-right:0px;
+    padding-left:0px;
+    border:0px;
+    line-height:1;
+    padding:0px 0px;
+    font-weight:bold;
+}
+
+#mode:hover {
+    color: #FFFFFF;
+}
+
+
+.center:before {
+    display: inline-block;
+    height: 100%; 
+    vertical-align: middle;
+}
+
+var {
+    font-style: normal;
+}
+
+table {
+    display:inline-table;
+}
+
+div {
+    vertical-align: middle;
+}
+
+@font-face {
+    font-family: "Aileron";
+    src: url("../font/Aileron-Regular.otf");
+}
+
+a, a:hover, a:active, a:visited {
+    text-decoration:none;
+}
+
+.activity_table_col {
+    padding-right: 30px;
+    color:#E6E6E6;
+}
+.activity_table_col:hover {
+    color: #FFFFFF;
