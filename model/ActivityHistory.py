@@ -7,7 +7,10 @@ from mongoengine import Document, EmbeddedDocument
 class PersonalActivityHistory(Document, MongoMixin):
     meta = MongoMixin.NO_INHERIT()
     meta['index'] = [
-        {'keys': 'uid:hashed'}
+        {'keys': 'uid:hashed'},
+        {'keys': 'expire_time:1'},
+        {'keys': 'activity_type:1'},
+        {'keys': 'completion:1'}
     ]
  
     meta['force_insert'] = True
@@ -23,6 +26,9 @@ class PersonalActivityHistory(Document, MongoMixin):
 
     #Type of activity
     activity_type = f.StringField(require=True, db_field='type')
+
+    #The completion of the activity
+    completion = f.BooleanField(require=True, db_field='completion')
 
     @property
     def get_duration(self):

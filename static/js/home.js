@@ -44,10 +44,8 @@ function positionHandler(position) {
 
 $(document).ready(function() {
     setInterval(function(){
-        var datetime = new Date();
-        var hour = datetime.getHours()
-        $("#hour").text(hour%12==0?'12':hour%12);
-        $("#minute").text((datetime.getMinutes()<10?'0':'') + datetime.getMinutes());
+        main_clock()
+        count_down_timer(document.getElementsByClassName("cnt_down_timer")[0])
     },1000);
     getLocation()
 
@@ -70,6 +68,7 @@ $(document).ready(function() {
     }
 
     date.text(weekdayNames[datetime.getDay()] + "  " + monthNames[datetime.getMonth()] + " " + dd);
+    get_cur_activity()
 });
 
 $('#mode').click(function(e) {
@@ -86,6 +85,24 @@ $('#mode').click(function(e) {
     hide_all_activities(e.target.textContent)
   }
 });
+
+function get_cur_activity() {
+    $.get('/api/cur_mode', function(data){
+        cur_mode = data[0]
+        cur_timer = data[1]
+        if (cur_timer == 0) {
+            $("#mode").text('-')
+            document.getElementsByClassName("cnt_down_timer")[0].textContent = '0:00'
+            document.getElementsByClassName("cnt_down_timer")[0].setAttribute('value',0)
+        }
+        else {
+            document.getElementsByClassName("cnt_down_timer")[0].textContent = cur_timer
+            document.getElementsByClassName("cnt_down_timer")[0].setAttribute('value',cur_timer)
+            $("#mode").text(cur_mode)
+
+        }
+    });
+}
 
 function show_all_activities() {
     var cnt_down_timer = $(".cnt_down_timer").text()
@@ -135,10 +152,32 @@ function hide_all_activities(activity) {
         dataType: 'json',
         async: true
     }).success(function(data){
-        cnt_down_timer.text(data+':00')
+        document.getElementsByClassName("cnt_down_timer")[0].textContent = data+':00'
+        document.getElementsByClassName("cnt_down_timer")[0].setAttribute("value",data*60)
     });
 }
 
+function main_clock(){
+    var datetime = new Date();
+    var hour = datetime.getHours()
+    $("#hour").text(hour%12==0?'12':hour%12);
+    $("#minute").text((datetime.getMinutes()<10?'0':'') + datetime.getMinutes());
+}
+
+function count_down_timer(display){
+    timer = display.getAttribute("value")
+    minutes = parseInt(timer / 60, 10);
+    seconds = parseInt(timer % 60, 10);
+
+    minutes = minutes < 10 ? "0" + minutes : minutes;
+    seconds = seconds < 10 ? "0" + seconds : seconds;
+
+    display.textContent = minutes + ":" + seconds;
+    if (timer > 0){
+        timer = timer - 1
+    }
+    display.setAttribute('value', timer)
+}
 
 
 

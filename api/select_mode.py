@@ -1,4 +1,4 @@
-import time 
+import time
 
 from bson import ObjectId
 from api.base import BaseApi
@@ -22,7 +22,7 @@ class selectMode(BaseApi):
         duration = int(activity['duration'])
         new_activity.uid = default_user
         new_activity.start_time = cur_time
-        new_activity.expire_time = cur_time + duration
+        new_activity.expire_time = cur_time + duration*60
         new_activity.activity_type = mode
 
         new_activity.save()
