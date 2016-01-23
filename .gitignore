@@ -2,3 +2,4 @@ config/*
 idea.txt
 design/*
 *.pyc
+static/.DS_Store
