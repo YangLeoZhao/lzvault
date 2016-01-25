@@ -109,7 +109,7 @@ function show_all_activities() {
         type: 'GET',
         url: '/api/possible_mode',
         dataType: 'json',
-        async: false
+        async: true
     }).success(function(data){
         var choices = ['select_study','select_play', 'select_break']
         var table = document.createElement('table');

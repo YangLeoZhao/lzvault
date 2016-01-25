@@ -1,0 +1,70 @@
+#name{
+    font-size:46px;
+}
+
+.contact_info{
+    font-size:20px;
+    display: inline;
+}
+
+.link{
+    text-decoration:none;
+    color:#E6E6E6;
+}
+
+.link:hover, .link:active {
+    text-decoration:none;
+    color: #6495ED;
+}
+
+.resume_body {
+    padding-left:160px;
+    padding-right:160px;
+    background-color: #343434;
+}
+
+.headding {
+    font-size:35px;
+    text-align: left;
+    color: #6495ED;
+}
+
+hr {
+    color:#E6E6E6;
+    border-width: 5px;
+}
+
+.major_headding {
+    font-size: 30px;
+    display: block;
+    text-align:left;
+    color: #6495ED;
+}
+
+.major_headding span {
+    display:block;
+    float:right;
+    color:#E6E6E6;
+}
+
+.description {
+    font-size: 22px;
+    font-style:italic;
+    display: block;
+    text-align:left;
+}
+
+.description span{
+    display:block;
+    float:right;
+}
+
+li {
+    font-size:20px;
+    text-align:left;
+    padding-bottom:5px;
+}
+
+b {
+    color:#6495ED;
+}

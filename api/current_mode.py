@@ -9,4 +9,5 @@ class curMode(BaseApi):
         cur_activity = PersonalActivityHistory._get_collection().find({'expire_time': {'$gt': cur_time}})
         if not cur_activity.count():
             self.success((None, 0))
-        self.success((cur_activity[0]['type'], cur_activity[0]['expire_time'] - cur_time))
+        else:
+            self.success((cur_activity[0]['type'], cur_activity[0]['expire_time'] - cur_time))
