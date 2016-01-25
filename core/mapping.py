@@ -20,7 +20,8 @@ def get_handlers():
         URLSpec(r'/api/display_temperature', api.displayTemperature),
         URLSpec(r'/api/possible_mode', api.possibleMode),
         URLSpec(r'/api/select_mode', api.selectMode),
-        URLSpec(r'/api/cur_mode', api.curMode)
+        URLSpec(r'/api/cur_mode', api.curMode),
+        URLSpec(r'/api/task_finished', api.taskCompletion)
     ]
 
     return handler

@@ -105,17 +105,9 @@ function get_cur_activity() {
 }
 
 function show_all_activities() {
-    var cnt_down_timer = $(".cnt_down_timer").text()
-    var cur_mode = $(".cur_mode").text()
-    var params = {
-        'cnt_down_timer': cnt_down_timer,
-        'cur_mode'      : cur_mode
-    }
-
     $.ajax ({
-        type: 'POST',
+        type: 'GET',
         url: '/api/possible_mode',
-        data: params,
         dataType: 'json',
         async: false
     }).success(function(data){
@@ -173,10 +165,30 @@ function count_down_timer(display){
     seconds = seconds < 10 ? "0" + seconds : seconds;
 
     display.textContent = minutes + ":" + seconds;
-    if (timer > 0){
+    if (timer > 1){
+        timer = timer - 1
+    }
+    else if (timer == 1){
+        task_finished()
         timer = timer - 1
     }
     display.setAttribute('value', timer)
+}
+
+function task_finished(){
+    //In the future, i want to have a mobile notification,
+    //possibly recommend the next task to be accomplished
+    //and show upcoming deadlines
+    cur_mode = $("#mode").text()
+    $.ajax({
+        type: 'POST',
+        url: '/api/task_finished',
+        data: {'mode': cur_mode},
+        dataType: 'json',
+        async: true
+    }).success(function(){
+        console.log('successfully registered finished task')
+    });
 }
 
 

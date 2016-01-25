@@ -24,6 +24,7 @@ class selectMode(BaseApi):
         new_activity.start_time = cur_time
         new_activity.expire_time = cur_time + duration*60
         new_activity.activity_type = mode
+        new_activity.completion = False
 
         new_activity.save()
 
