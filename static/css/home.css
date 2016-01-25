@@ -11,6 +11,13 @@
     line-height:1;
 }
 
+#footer {
+    background-color: #6495ED;
+    height:400px;
+    font-family: "Aileron";
+    font-size:30px;
+}
+
 
 .tab-content {
     border-left: 1px solid #ddd;
@@ -173,3 +180,10 @@ a, a:hover, a:active, a:visited {
 }
 .activity_table_col:hover {
     color: #FFFFFF;
+}
+
+.construction_msg {
+    text-align: center;
+}
+
+
