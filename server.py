@@ -19,7 +19,7 @@ CUR_DIR = os.path.abspath(os.path.dirname(__file__))
 logger = logging.getLogger('lzvault')
 
 def _define():
-    define('port', type=int, default=8888,
+    define('port', type=int, default=80,
             help='Port nuber for the server to run on')
     define('env', default='stage', type=str,
             help='Environment to run the Webserver in')

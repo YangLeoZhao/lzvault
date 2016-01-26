@@ -186,4 +186,7 @@ a, a:hover, a:active, a:visited {
     text-align: center;
 }
 
+.not_available:hover {
+    color: #222222;
+}
 
