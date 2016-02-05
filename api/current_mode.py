@@ -6,7 +6,8 @@ from model.ActivityHistory import PersonalActivityHistory
 class curMode(BaseApi):
     def get(self):
         cur_time = int(time.time())
-        cur_activity = PersonalActivityHistory._get_collection().find({'expire_time': {'$gt': cur_time}})
+        #Find the ongoing activity that ends the latest
+        cur_activity = PersonalActivityHistory._get_collection().find({}).sort('expire_time', -1).limit(1)     
         if not cur_activity.count():
             self.success((None, 0))
         else:

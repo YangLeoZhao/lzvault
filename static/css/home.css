@@ -102,18 +102,12 @@
 
 #location-temperature {
     font-size:45px;
-}
-
-#location {
-    font-style:normal;
-}
-
-#temperature {
     font-style:normal;
 }
 
 #date_info {
     float:center;
+    padding-top:5px;
     font-size:35px;
 }
 
@@ -175,8 +169,15 @@ a, a:hover, a:active, a:visited {
 }
 
 .activity_table_col {
-    padding-right: 30px;
     color:#E6E6E6;
+    color:#E6E6E6;
+    font-size:140px;
+    padding-top:0px;
+    padding-left:0px;
+    padding-right: 20px;
+    border:0px;
+    line-height:1;
+    font-weight:bold;
 }
 .activity_table_col:hover {
     color: #FFFFFF;

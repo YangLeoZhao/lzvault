@@ -1,62 +1,42 @@
-var temperature = $("#temperature")
-temperature.text("Feeling...")
-var loc = $("#location")
-loc.text("Triangulating... ")
-var date = $("#date")
-date.text("Guessing..")
-$(".cnt_down_timer").text("0:00")
-$("#mode").text("S")
+var lzvault = angular.module('lzvault', [])
 
-function getLocation() {
-    if (navigator.geolocation) {
-        navigator.geolocation.getCurrentPosition(positionHandler);
-    } else {
-        loc.text("Geolocation is not supported by this browser.");
-    }
-}
+lzvault.controller('mainCtrl', function($scope, $interval){
+    //Initalizing scope variables
+    $scope.cur_temp = "Feeling...";
+    $scope.cur_location = "Triangulating... ";
+    $scope.cnt_down_timer = "0:00";
+    $scope.cnt_down_timer_val = 0;
+    $scope.cur_mode = "";
+    $scope.cur_time = "0:00";
+    $scope.cur_date = new Date();
+    $scope.tickInterval = 1000;
+    $scope.show_all_activities = lzvault.showAllActivities;
+    $scope.hide_all_activities = lzvault.hideAllActivities;
+    $scope.show_all_activities_toggle = false;
 
-function positionHandler(position) {
-    var params = {
-        'latitude': position.coords.latitude,
-        'longitude': position.coords.longitude
-    }
+    lzvault.onLoadFunction($scope);
+    lzvault.mainClock($scope);
 
-        $.ajax({
-            type: 'POST',
-            url: '/api/display_position',
-            data: params,
-            dataType: 'json',
-            async: true
-        }).success(function(data){
-            loc.text(data)
-        });
+    $interval(function(){
+        lzvault.mainClock($scope)
+    }, $scope.tickInterval*5);
 
-    $.ajax({
-        type: 'POST',
-        url: '/api/display_temperature',
-        data: params,
-        dataType: 'json',
-        async: true
-    }).success(function(data){
-        temperature.text(data)
-    });
-}
+    lzvault.getLocation($scope)
+    lzvault.getCurActivity($scope)
 
-$(document).ready(function() {
-    setInterval(function(){
-        main_clock()
-        count_down_timer(document.getElementsByClassName("cnt_down_timer")[0])
-    },1000);
-    getLocation()
+    $interval(function(){
+      lzvault.countDownClock($scope)
+    }, $scope.tickInterval)
+});
 
+lzvault.onLoadFunction = function(scope){
     var monthNames = ["January", "February", "March", "April", "May", "June",
     "July", "August", "September", "October", "November", "December"
     ];
     var weekdayNames = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday",
     "Saturday"];
 
-    var datetime = new Date();
-    var dd = datetime.getDate();
+    var dd = scope.cur_date.getDate();
     if (dd === 1) {
         dd = dd.toString() + 'st'
     } else if (dd === 2) {
@@ -66,77 +46,109 @@ $(document).ready(function() {
     } else {
         dd = dd.toString() + 'th'
     }
+    scope.date = weekdayNames[scope.cur_date.getDay()] + "  " + monthNames[scope.cur_date.getMonth()] + " " + dd
+}
 
-    date.text(weekdayNames[datetime.getDay()] + "  " + monthNames[datetime.getMonth()] + " " + dd);
-    get_cur_activity()
-});
+lzvault.mainClock = function(scope) {
+    cur_date = new Date();
+    hour = cur_date.getHours();
+    min = cur_date.getMinutes();
+    hour  = hour%12==0?'12':hour%12;
+    min = min<10?'0'+min:min;
+    scope.cur_time = hour + ':' + min;
+}
 
-$('#mode').click(function(e) {
-  var toggle = this;
-  var cur = document.getElementById("mode").getAttribute("value");
+lzvault.getLocation = function (scope){
+    if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(lzvault.positionHandler);
+    } else {
+        scope.cur_location = "Geolocation is not supported by this browser.";
+    }
+}
 
-  e.preventDefault();
-  $(toggle).toggleClass('toggle-on');
-  document.getElementById("mode").setAttribute("value", (Number(cur) + 1)%2);
-  if (cur == 1){
-    show_all_activities()
-  }
-  else {
-    hide_all_activities(e.target.textContent)
-  }
-});
+lzvault.positionHandler = function (position) {
+    var params = {
+        'latitude': position.coords.latitude,
+        'longitude': position.coords.longitude
+    }
+    var scope = angular.element($("#content")).scope();
+    $.ajax({
+        type: 'POST',
+        url: '/api/display_position',
+        data: params,
+        dataType: 'json',
+        async: true
+    }).success(function(data){
+        scope.cur_location = data;
+        scope.$apply();
+    });
 
-function get_cur_activity() {
-    $.get('/api/cur_mode', function(data){
-        cur_mode = data[0]
-        cur_timer = data[1]
-        if (cur_timer == 0) {
-            $("#mode").text('-')
-            document.getElementsByClassName("cnt_down_timer")[0].textContent = '0:00'
-            document.getElementsByClassName("cnt_down_timer")[0].setAttribute('value',0)
-        }
-        else {
-            document.getElementsByClassName("cnt_down_timer")[0].textContent = cur_timer
-            document.getElementsByClassName("cnt_down_timer")[0].setAttribute('value',cur_timer)
-            $("#mode").text(cur_mode)
-
-        }
+    $.ajax({
+        type: 'POST',
+        url: '/api/display_temperature',
+        data: params,
+        dataType: 'json',
+        async: true
+    }).success(function(data){
+        scope.cur_temp = data;
+        scope.$apply();
     });
 }
 
-function show_all_activities() {
+lzvault.getCurActivity = function (scope){
+    $.get('/api/cur_mode', function(data){
+        //cur_mode, cur_timer = data
+        if (data[1] <= 0){
+            lzvault.taskFinished(data[0])
+            scope.cur_mode = "-";
+            scope.cnt_down_timer = "0:00";
+            scope.cnt_down_timer_val = 0;
+        }
+        else {
+            scope.cur_mode = data[0];
+            scope.cnt_down_timer_val = data[1]
+        }
+
+    });
+}
+
+lzvault.countDownClock = function (scope){
+    timer = scope.cnt_down_timer_val;
+    minutes = parseInt(timer / 60, 10);
+    seconds = parseInt(timer % 60, 10);
+
+    seconds = seconds < 10 ? "0" + seconds : seconds;
+    scope.cnt_down_timer = minutes + ":" + seconds;
+
+    if (timer > 1){
+        timer = timer - 1
+    }
+    else if (timer == 1){
+        lzvault.taskFinished(scope.cur_mode)
+        timer = timer - 1
+    }
+    scope.cnt_down_timer_val = timer;
+}
+
+lzvault.showAllActivities = function() {
     $.ajax ({
         type: 'GET',
         url: '/api/possible_mode',
         dataType: 'json',
         async: true
     }).success(function(data){
-        var choices = ['select_study','select_play', 'select_break']
-        var table = document.createElement('table');
-        var tr = document.createElement('tr')
-        for (i=0; i<data.length; i++) {
-            var td = document.createElement('td');
-            var text = document.createTextNode(data[i]);
-
-            td.classList.add('activity_table_col')
-            td.appendChild(text);
-            tr.appendChild(td);
-        }
-        table.appendChild(tr);
-        activity_options = document.getElementById("mode");
-        $("#mode").text("")
-        activity_options.appendChild(table);
+        var scope = angular.element($("#content")).scope();
+        scope.activities = data;
+        scope.show_all_activities_toggle = true;
     });
 }
 
-function hide_all_activities(activity) {
-    activity_options = document.getElementById("mode");
-    activity_options.innerHTML = activity
-    var cnt_down_timer = $(".cnt_down_timer")
-
+lzvault.hideAllActivities = function($event, activity) {
+    var scope = angular.element($("#content")).scope();
     var params = {
         'mode':activity
     }
+
     $.ajax({
         type: 'POST',
         url: '/api/select_mode',
@@ -144,56 +156,25 @@ function hide_all_activities(activity) {
         dataType: 'json',
         async: true
     }).success(function(data){
-        document.getElementsByClassName("cnt_down_timer")[0].textContent = data+':00'
-        document.getElementsByClassName("cnt_down_timer")[0].setAttribute("value",data*60)
+        scope.cur_mode = activity;
+        scope.cnt_down_timer_val = data*60;
+        scope.cnt_down_timer = data+':00';
+        scope.show_all_activities_toggle = false;
     });
 }
 
-function main_clock(){
-    var datetime = new Date();
-    var hour = datetime.getHours()
-    $("#hour").text(hour%12==0?'12':hour%12);
-    $("#minute").text((datetime.getMinutes()<10?'0':'') + datetime.getMinutes());
-}
-
-function count_down_timer(display){
-    timer = display.getAttribute("value")
-    minutes = parseInt(timer / 60, 10);
-    seconds = parseInt(timer % 60, 10);
-
-    minutes = minutes < 10 ? "0" + minutes : minutes;
-    seconds = seconds < 10 ? "0" + seconds : seconds;
-
-    display.textContent = minutes + ":" + seconds;
-    if (timer > 1){
-        timer = timer - 1
-    }
-    else if (timer == 1){
-        task_finished()
-        timer = timer - 1
-    }
-    display.setAttribute('value', timer)
-}
-
-function task_finished(){
+lzvault.taskFinished = function(task){
     //In the future, i want to have a mobile notification,
     //possibly recommend the next task to be accomplished
     //and show upcoming deadlines
-    cur_mode = $("#mode").text()
     $.ajax({
         type: 'POST',
         url: '/api/task_finished',
-        data: {'mode': cur_mode},
+        data: {'mode': task},
         dataType: 'json',
         async: true
     }).success(function(){
         console.log('successfully registered finished task')
     });
 }
-
-
-
-
-
-
 
